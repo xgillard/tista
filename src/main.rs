@@ -1,6 +1,4 @@
-use std::time::{Duration, UNIX_EPOCH};
-
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, TimeZone, Utc};
 use structopt::StructOpt;
 
 use anyhow::{Context, Result};
@@ -19,7 +17,7 @@ enum Args {
     /// Converts from a timestamp to a human readable date and time
     FromTista {
         /// The timestamp you want to convert as a date time
-        tista: u64
+        tista: i64
     }
 }
 
@@ -34,15 +32,11 @@ fn main() -> Result<()> {
             println!("{}", date.timestamp());
         },
         Args::FromTista{tista} => {
-            println!("{}", utc(tista))
+            println!("{}", Utc.timestamp(tista, 0))
         }
     }
     Ok(())
 }
 fn as_rfc3339(date: &str, time: &str) -> String {
     format!("{}T{}Z", date, time)
-}
-fn utc(tista: u64) -> DateTime<Utc> {
-    DateTime::<Utc>::from(UNIX_EPOCH + Duration::from_secs(tista))
-        .with_timezone(&Utc)
 }
